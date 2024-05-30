@@ -12,4 +12,7 @@ public interface ConfigService {
     public Property updatePropertyByKey(String key, String value);
 
     public void deleteProperty(String key);
+
+    public Property addProperty(Property property);
+    public List<Property> addProperties(List<Property> properties);
 }

@@ -37,4 +37,13 @@ public class ConfigReaderController {
         return configService.getProperty(key);
     }
 
+    @PostMapping("/config")
+    public Property addConfig(@RequestBody Property property) {
+        return  configService.addProperty(property);
+    }
+    @PostMapping("/configs")
+    public List<Property> addConfig(@RequestBody List<Property> properties) {
+        return configService.addProperties(properties);
+    }
+
 }

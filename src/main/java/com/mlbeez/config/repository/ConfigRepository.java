@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ConfigRepository extends JpaRepository<Property,Long> {
+public interface ConfigRepository extends JpaRepository<Property,Integer> {
     Property findByKey(String key);
-    List<Property> findByGroup(String group);
+    List<Property> findByGroups(String group);
 
     boolean existsByKey(String key);
     void deleteByKey(String key);

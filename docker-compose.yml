@@ -1,15 +1,14 @@
 services:
   db:
     image: postgres:14
-    container_name: postgres
     environment:
-      POSTGRES_DB: melbeez
+      POSTGRES_DB: Melbeez
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+    networks:
+      - app-network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - app-db:/var/lib/postgresql/data
 
   app:
     build:
@@ -17,9 +16,15 @@ services:
       dockerfile: Dockerfile
     container_name: java_service
     ports:
-      - "8083:8083"
+      - 8083:8083
+    networks:
+      - app-network
     depends_on:
       - db
 
+networks:
+  app-network:
+    driver: bridge
 volumes:
-  postgres_data:
+  app-db:
+    driver: local

@@ -30,7 +30,7 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
         } else if (statusCode.is4xxClientError()) {
             // handle CLIENT_ERROR
             if (statusCode == HttpStatus.NOT_FOUND) {
-                throw new DataNotFoundException(httpResponse.toString(),httpResponse.getStatusText());
+                throw new ConfigNotFoundException(httpResponse.toString(),httpResponse.getStatusText());
 
             }
 

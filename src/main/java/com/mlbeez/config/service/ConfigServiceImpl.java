@@ -1,9 +1,10 @@
 package com.mlbeez.config.service;
 
 import com.mlbeez.config.controller.ConfigReaderController;
+import com.mlbeez.config.exception.ConfigAlreadyExists;
 import com.mlbeez.config.model.Property;
 import com.mlbeez.config.repository.ConfigRepository;
-import com.mlbeez.config.exception.DataNotFoundException;
+import com.mlbeez.config.exception.ConfigNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.Link;
@@ -22,7 +23,7 @@ public class ConfigServiceImpl implements ConfigService{
     public List<Property> getAllProperties() {
         List<Property> properties = configRepository.findAll();
         if (CollectionUtils.isEmpty(properties)) {
-            throw new DataNotFoundException("No properties available");
+            throw new ConfigNotFoundException("No properties available");
         }
 
         for (Property property : properties) {
@@ -37,7 +38,7 @@ public class ConfigServiceImpl implements ConfigService{
     public Property getProperty(String key) {
         Property property = configRepository.findByKey(key);
         if (ObjectUtils.isEmpty(property)) {
-            throw new DataNotFoundException("No property available for the key "+key);
+            throw new ConfigNotFoundException("No property available for the key "+key);
         }
         Link selfLink = WebMvcLinkBuilder.linkTo(ConfigReaderController.class).withSelfRel();
         property.add(selfLink);
@@ -45,9 +46,9 @@ public class ConfigServiceImpl implements ConfigService{
     }
 
     public List<Property> getAllPropertiesByGroup(String group) {
-        List<Property> properties = configRepository.findByGroup(group);
+        List<Property> properties = configRepository.findByGroups(group);
         if (CollectionUtils.isEmpty(properties)) {
-            throw new DataNotFoundException("No properties available for the group, "+group);
+            throw new ConfigNotFoundException("No properties available for the group, "+group);
         }
 
         for (Property property : properties) {
@@ -63,7 +64,7 @@ public class ConfigServiceImpl implements ConfigService{
     public Property updatePropertyByKey(String key, String value) {
         Property property = configRepository.findByKey(key);
         if (ObjectUtils.isEmpty(property)) {
-            throw new DataNotFoundException("No property available for the key "+key);
+            throw new ConfigNotFoundException("No property available for the key "+key);
         }
         property.setValue(value);
         property = configRepository.save(property);
@@ -78,7 +79,20 @@ public class ConfigServiceImpl implements ConfigService{
             configRepository.deleteByKey(key);
             return;
         }
-        throw new DataNotFoundException("No property available for the key "+key);
+        throw new ConfigNotFoundException("No property available for the key "+key);
+    }
+
+    @Override
+    public Property addProperty(Property property) {
+        if (configRepository.existsByKey(property.getKey())) {
+            throw new ConfigAlreadyExists("Config already exists "+ property.getKey());
+        }
+        return configRepository.save(property);
+    }
+
+    @Override
+    public List<Property> addProperties(List<Property> properties) {
+        return configRepository.saveAll(properties);
     }
 
 }

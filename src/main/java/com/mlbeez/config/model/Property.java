@@ -11,9 +11,8 @@ import org.springframework.hateoas.RepresentationModel;
 public class Property extends RepresentationModel<Property> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO) // Use GenerationType.IDENTITY for auto-generated IDs
-    @Column(columnDefinition = "bigint")
-    private Long id;
-    private String group;
+    private int id;
+    private String groups;
     private String key;
     private String value;
     private String description;
